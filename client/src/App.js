@@ -19,11 +19,33 @@ class App extends React.Component {
       })
   }
 
+  updateSong = (id) => {
+    axios.put(`/api/songs/${id}`)
+      .then( res => {
+        let songs = this.state.songs.map ( song => {
+          if (song.id === id) return res.data;
+          return song;
+        });
+        this.setState({ songs })
+      })
+  }
+
+  destroySong = (id) => {
+    axios.delete(`/api/songs/${id}`)
+      .then( res => {
+        const { songs } = this.state;
+        this.setState({ songs: songs.filter( song => song.id !== id) })
+      })
+  }
+
   render() {
     return (
       <div className='ui container'>
         <SongForm createSong={this.createSong} />
-        <SongList songs={this.state.songs} />
+        <SongList songs={this.state.songs}
+                  updateSong={this.updateSong}
+                  destroySong={this.destroySong}
+        />
       </div>
     );
   }

@@ -14,9 +14,13 @@ class Api::SongsController < ApplicationController
   end
 
   def update
+    song = Song.find(params[:id])
+    song.update()
+    render json: song
   end
 
   def destroy
+    Song.find(params[:id]).destroy
   end
 
   private
