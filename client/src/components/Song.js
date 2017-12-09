@@ -1,32 +1,38 @@
 import React from 'react';
-import { Form, Card, Icon, Button } from 'semantic-ui-react';
+import { Input, Card, Form, Icon, Button } from 'semantic-ui-react';
 
 class Song extends React.Component {
-  state = { edit: false }
+  state = { edit: false, title: this.props.title, duration: this.props.duration, id: this.props.id }
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    const { id, title, duration } = this.state;
-    const song = { id: id, title, duration };
-    this.props.updateSong(id);
-  }
-
-  toggleEdit = () => {
-    const { edit } = this.state;
+  toggleEdit = (cancel = false) => {
+    const { edit, title, duration } = this.state;
+    if (cancel) this.setState({ title: title, duration: duration })
     this.setState({ edit: !edit })
   }
 
-  editSong = () => {
-    const { id, title, duration } = this.props
+  handleChange = (e) => {
+    let { name, value } = e.target;
+    this.setState({ [name]: value });
+  }
 
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const { title, duration, id } = this.state
+    const song = { title, duration, id };
+    this.props.updateSong(song);
+    this.toggleEdit();
+  }
+
+  editSong = () => {
+    const { id, title, duration } = this.props;
     return (
       <Form onSubmit={this.handleSubmit}>
         <Form.Group>
-          <Form.Input defaultValue={ title } />
-          <Form.Input defaultValue={ duration } />
+          <Input name='title' defaultValue={ title } onChange={this.handleChange} />
+          <Input name='duration' defaultValue={ duration } onChange={this.handleChange} />
         </Form.Group>
-        <Button className='ui red button' type="button" onClick={this.toggleEdit}>Cancel</Button>
-        <Button className='ui teal button' type='submit'>Save</Button>
+        <Button className='ui red button' type="button" onClick={() => this.toggleEdit(true)}>Cancel</Button>
+        <Button className='ui teal button' type="submit">Save</Button>
       </Form>
     )
   }

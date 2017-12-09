@@ -7,6 +7,10 @@ class App extends React.Component {
   state = { songs: []  }
 
   componentDidMount(){
+    this.fetchSongs()
+  }
+
+  fetchSongs = () => {
     axios.get('/api/songs')
       .then( res => this.setState({ songs: res.data }))
   }
@@ -19,12 +23,13 @@ class App extends React.Component {
       })
   }
 
-  updateSong = (id) => {
-    axios.put(`/api/songs/${id}`)
+  updateSong = (song) => {
+    axios.put(`/api/songs/${song.id}`, song )
       .then( res => {
-        let songs = this.state.songs.map ( song => {
-          if (song.id === id) return res.data;
-          return song;
+        let songs = this.state.songs.map ( s => {
+          if (s.id === song.id)
+            return res.data;
+          return s;
         });
         this.setState({ songs })
       })
@@ -43,8 +48,8 @@ class App extends React.Component {
       <div className='ui container'>
         <SongForm createSong={this.createSong} />
         <SongList songs={this.state.songs}
-                  updateSong={this.updateSong}
                   destroySong={this.destroySong}
+                  updateSong={this.updateSong}
         />
       </div>
     );
